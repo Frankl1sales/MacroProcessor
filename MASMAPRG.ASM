@@ -14,10 +14,8 @@ RD REC
 JSUB PROCESS_RECORD
 J LOOP
 ENDLOOP NOOP
-... ; Mais instruções
 J EXIT
 SUBROUTINE SUBR
-... ; Corpo da sub-rotina
 RSUB
 INPUT   BYTE    X'F0'
 REC     RESW    1
