@@ -10,9 +10,12 @@ MACRO2  MACRO  PARA
         MEND
 
 START   START 0
-        MACRO1 ARG1, ARG2
+        INTDEF x
+        INTDEF Y
+X       MACRO1 ARG1, ARG2
+Y       ADD X
         JSUB SUBROUTINE
-        MACRO2 ARG3
+        MACRO2 ARG3 
         LDX #10
         LOOP    TD INPUT
                 JEQ ENDLOOP
@@ -20,10 +23,8 @@ START   START 0
                 JSUB PROCESS_RECORD
                 J LOOP
         ENDLOOP NOOP
-        ... ; Mais instruções
         J EXIT
         SUBROUTINE SUBR
-                ... ; Corpo da sub-rotina
                 RSUB
 
 INPUT   BYTE    X'F0'
