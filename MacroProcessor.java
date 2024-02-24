@@ -4,53 +4,74 @@ import java.util.Map;
 import java.util.Stack;
 
 public class MacroProcessor {
+    /*
+     *  Um Map para armazenar definições de macros, onde as chaves são os 
+     *   nomes das macros e os valores são objetos Macro
+     */
     private Map<String, Macro> macroTable;
-
+    // Construtor - inicia macroTable com uma hashmap vazia quando uma instancia de MacroProcessor é criada
     public MacroProcessor() {
         this.macroTable = new HashMap<>();
     }
-
+    
     public void processMacros(String inputFileName, String outputFileName) {
         try {
+            // Le o arquivo de entrada 
             String fileContent = FileProcessor.readFile(inputFileName);
-            processContent(fileContent);
+            // processa o conteúdo 
             String result = processContent(fileContent);
+            // escreve o resultado no arquivo de saída
             FileProcessor.writeFile(outputFileName, result);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+    /*Autor: Franklin
+     * o método processContent percorre cada linha do conteúdo, identifica definições de macros (linhas
+     * começando com "MACRO") e as armazena no macroTable. Para as linhas que não são definições
+     * de macros, chama processLine para processar a linha e anexa o resultado ao StringBuilder. 
+     * O conteúdo resultante é retornado como uma string.
+     */ 
+    private String processContent(String content) { // recebe uma string de conteúdo como entrada
+        StringBuilder result = new StringBuilder();  // cria um objeto StringBuilder 
+        String[] lines = content.split("\n"); /*
+                                                    /Divide a string content em um array de string, onde 
+                                                    / cada elemento representa uma linha do conteúdo original*/
 
-    private String processContent(String content) {
-        StringBuilder result = new StringBuilder();
-        String[] lines = content.split("\n");
+        for (String line : lines) { // inicia um loop que percorre cada linha do array de linhas
+            line = line.trim(); // remove espaços em branco extras do inicio e do final de cada linha
 
-        for (String line : lines) {
-            line = line.trim();
-
-            if (line.isEmpty()) {
+            if (line.isEmpty()) { // verifica se a linha está vázia em após a remoção dos espaços 
                 continue;  // Pular linhas em branco
             }
 
-            System.out.println("Processing line: " + line);
+            System.out.println("Processing line: " + line); /*  imprime a mensagem indicando 
+                                                            /que a linha está sendo processada*/
 
-            if (line.toUpperCase().startsWith("MACRO")) {
-                Macro macro = parseMacroDefinition(line, lines);
-                macroTable.put(macro.getName(), macro);
-            } else {
+            if (line.toUpperCase().startsWith("MACRO")) { //Verifica se a linha é uma Macro
+                Macro macro = parseMacroDefinition(line, lines); /* se for, chama o metodo 
+                                                                /para analisar definiçaão e retonar  um objeto Macro*/
+                macroTable.put(macro.getName(), macro); // adiciona a Macro a macroTable
                 result.append(processLine(line)).append("\n");
+            } else {
+                result.append(processLine(line)).append("\n"); // se a linha não é Macro, chama o metodo processLine
             }
         }
-
-        return result.toString().trim();
+        
+        return result.toString().trim(); // retorna o conteúdo acumulado no StringBuilder como uma string
     }
-
+    /*
+     * Este método é responsável por analisar a definição de uma macro a partir de uma linha
+     * específica (`line`) e do conjunto de linhas inteiro (`lines`). 
+     */
     private Macro parseMacroDefinition(String line, String[] lines) {
-        String[] parts = line.split("\\s+");
-        String macroName = parts[1];
+        String[] parts = line.split("\\s+"); // divide a linha em partes usando espaços em branco
+        String macroName = parts[0]; 
+        // verificador
+        System.out.print("\n\n\n\n" + macroName+ "\n\n\n\n");
         Macro macro = new Macro(macroName);
 
-        int i = 1;
+        int i = 0;
         while (!lines[i].trim().toUpperCase().endsWith("MEND")) {
             macro.addLine(lines[i].trim());
             i++;
@@ -60,12 +81,12 @@ public class MacroProcessor {
     }
 
     private String processLine(String line) {
-        String[] parts = line.split("\\s+");
+        String[] parts = line.split("\\s+"); // divide a linha em partes
 
-        if (macroTable.containsKey(parts[0])) {
-            Macro macro = macroTable.get(parts[0]);
-            Stack<String> arguments = new Stack<>();
-            for (int i = 1; i < parts.length; i++) {
+        if (macroTable.containsKey(parts[0])) { // se o primeiro elemento da linha tiver na macroTable
+            Macro macro = macroTable.get(parts[0]);  // obtem a macro correspondente 
+            Stack<String> arguments = new Stack<>(); // cria uma pilha para armazenar os argumentos
+            for (int i = 2; i < parts.length; i++) {
                 arguments.push(parts[i]);
             }
 
