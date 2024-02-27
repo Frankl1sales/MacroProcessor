@@ -19,6 +19,7 @@ public class MacroManager {
         return macros.get(name);
     }
 
+    
     public boolean isMacroCreated(String name) {
         return macros.containsKey(name);
     }
