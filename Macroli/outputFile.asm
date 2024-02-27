@@ -1,0 +1,18 @@
+COPY  START 0
+FIRST STL RETADR
+RDBUFF MACRO &F1, &BUFFER, &LENGTH
+       CLEAR X
+       CLEAR A 
+       LDT   #4090
+       TD    =X'&F1'
+       MEND
+
+COPY  START 0
+FIRST STL RETADR
+RDBUFF MACRO &F1, &BUFFER, &LENGTH
+       CLEAR X
+       CLEAR A 
+       LDT   #4090
+       TD    =X'&F1'
+       MEND
+
